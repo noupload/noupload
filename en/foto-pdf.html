@@ -85,6 +85,14 @@
   .seg input:focus-visible + span{outline:3px solid var(--blue);outline-offset:2px}
   .seg input:disabled + span{opacity:.45}
   .seg .hint{margin-top:6px}
+  /* dosya adı: yazı 16px (telefonda odaklanınca sayfa büyümesin), ".pdf" kutunun sağında sabit */
+  .namefield label{display:block;margin-bottom:6px;font-size:.84375rem;color:var(--ink-2);font-weight:600}
+  .namebox{display:flex;align-items:center;border:1.5px solid var(--ink-3);border-radius:12px;background:var(--ground)}
+  .namebox:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+  .namebox input{flex:1;min-width:0;min-height:44px;padding:8px 0 8px 12px;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1rem;outline:none}
+  .namebox input::placeholder{color:var(--ink-3);opacity:1}
+  .namebox span{padding:0 12px 0 2px;color:var(--ink-3);font-size:1rem}
+  .namefield .hint{margin-top:6px}
 
   /* alt çubuk: PDF oluştur → ilerleme → indir. Uzun listede ekranın altına yapışır. İlerleme = "çalışıyor" durumu, o yüzden yeşil. */
   .gobar{position:sticky;bottom:0;z-index:5;display:flex;flex-direction:column;gap:10px;padding:12px 0 calc(12px + env(safe-area-inset-bottom));background:var(--ground);border-top:1.5px solid var(--rule)}
@@ -168,6 +176,11 @@
       </div>
       <p class="hint" id="qualHint"></p>
     </fieldset>
+    <div class="namefield">
+      <label for="pdfName">File name</label>
+      <div class="namebox"><input type="text" id="pdfName" maxlength="80" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-describedby="nameHint"><span aria-hidden="true">.pdf</span></div>
+      <p class="hint" id="nameHint">Leave it empty and the file downloads as “lecture-notes.pdf”.</p>
+    </div>
   </section>
 
   <!-- ======================= 4) OLUŞTUR / İLERLEME / İNDİR ======================= -->
@@ -249,6 +262,8 @@ const STR = {
  "bigHint": "If you're going to email it, try the Small file setting.",
  "foot": "Single page · no server · no data collected",
  "fileName": "lecture-notes.pdf",
+ "nameL": "File name",
+ "nameHint": "Leave it empty and the file downloads as “lecture-notes.pdf”.",
  "noneOk": "None of the photos could be opened, so no PDF was created.",
  "noLib": "The PDF library couldn't be loaded. Check your internet connection and try again; your photos are still here.",
  "fail": "Something went wrong while creating the PDF. Try again with fewer photos or with “Small file”.",
@@ -516,6 +531,17 @@ document.addEventListener("drop", e => {
 document.querySelectorAll('input[name="size"], input[name="quality"]').forEach(r =>
   r.addEventListener("change", () => { invalidate(); paint(); }));
 
+// İndirilen dosyanın adı: kullanıcı yazar, boşsa varsayılan ad. Dosya sistemlerinin kabul etmediği karakterler
+// (\ / : * ? " < > | ve denetim karakterleri) atılır; sona yazılmış ".pdf" tekrar eklenmez.
+function pdfName(){
+  const raw = el("pdfName").value.normalize("NFC").replace(/[\\/:*?"<>|\u0000-\u001f\u007f]/g, " ")
+    .replace(/\.pdf\s*$/i, "").replace(/\s+/g, " ").trim().replace(/^\.+|\.+$/g, "").trim();
+  return raw ? raw + ".pdf" : STR.fileName;
+}
+el("pdfName").placeholder = STR.fileName.replace(/\.pdf$/i, "");
+el("pdfName").addEventListener("input", () => { el("dl").download = pdfName(); });
+el("pdfName").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
+
 /* ==================================================================
    4) PDF ÜRETİMİ
    Fotoğraflar tek tek işlenir: aç → tuvalde küçült/döndür → JPEG → PDF'e
@@ -674,7 +700,7 @@ function paint(){
   if (state === "done"){
     setText(el("resStat"), fmt("done", { n: result.pages, size: fmtSize(result.size) }));
     el("dl").href = pdfUrl;
-    el("dl").download = STR.fileName;
+    el("dl").download = pdfName();
   }
   el("bigHint").hidden = !(state === "done" && result.size > BIG_PDF);
   const failed = result ? result.failed : [];

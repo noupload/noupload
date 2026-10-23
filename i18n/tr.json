@@ -153,6 +153,8 @@
     "bigHint": "E-postayla göndereceksen Küçük dosya ayarını dene.",
     "foot": "Tek sayfa · sunucu yok · veri toplanmıyor",
     "fileName": "ders-notlari.pdf",
+    "nameL": "Dosya adı",
+    "nameHint": "Boş bırakırsan dosya “ders-notlari.pdf” adıyla iner.",
     "noneOk": "Fotoğrafların hiçbiri açılamadı, PDF oluşturulamadı.",
     "noLib": "PDF kütüphanesi yüklenemedi. İnternet bağlantını kontrol edip yeniden dene; seçtiğin fotoğraflar duruyor.",
     "fail": "PDF oluşturulurken bir sorun çıktı. Daha az fotoğrafla ya da “Küçük dosya” ile yeniden dene.",

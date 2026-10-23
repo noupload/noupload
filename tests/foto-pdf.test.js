@@ -151,6 +151,13 @@ const SPY = `(() => {
       doneVisible: !document.getElementById("done").hidden, makeHidden: document.getElementById("idle").hidden, msgHidden: document.getElementById("goMsg").hidden, jpgs: window.__jpgs, bmp: window.__bmp(), prog: window.__prog })`);
     check("T3 bitince: sayfa sayısı + boyut, İndir, dosya adı", [r.doneVisible, r.makeHidden, r.dl, r.href, r.text, r.msgHidden], [true, true, X.fileName, "blob:", X.download, true]);
     check("T3 özet biçimi “6 sayfa · … KB/MB”", r.stat, s => statRe(6).test(s));
+    // dosya adını kullanıcı yazar: PDF yeniden üretilmez, yalnızca indirme adı değişir; geçersiz karakterler atılır, boşsa varsayılan ad
+    { const name = async v => { await ev(`(() => { const i = document.getElementById("pdfName"); i.value = ${JSON.stringify(v)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`); return ev(`[document.getElementById("dl").getAttribute("download"), document.getElementById("done").hidden, document.getElementById("dl").href.slice(0, 5)]`); };
+      const got = [];
+      for (const v of ["Biyoloji 3. hafta", "  tarih/ödev:1?  ", "rapor.PDF", "...", ""]) got.push(await name(v));
+      check("T3 dosya adı alanı: yazılan ad iner, geçersiz karakterler atılır, boşsa varsayılan; sonuç kaybolmaz", got,
+        [["Biyoloji 3. hafta.pdf", false, "blob:"], ["tarih ödev 1.pdf", false, "blob:"], ["rapor.pdf", false, "blob:"], [X.fileName, false, "blob:"], [X.fileName, false, "blob:"]]);
+      check("T3 dosya adı alanı: etiket, ipucu, yer tutucu", await ev(`[document.querySelector('label[for="pdfName"]').textContent, document.getElementById("nameHint").textContent, document.getElementById("pdfName").placeholder]`), [X.nameL, X.nameHint, X.fileName.replace(/\.pdf$/, "")]); }
     const realSize = await ev(`fetch(document.getElementById("dl").href).then(r => r.blob()).then(x => x.size)`);
     check("T3 gösterilen boyut gerçek dosya boyutu", r.stat, s => { const m = s.match(/· (\S+) (KB|MB)$/); const v = parseNum(m[1]) * (m[2] === "MB" ? 1048576 : 1024); return Math.abs(v - realSize) <= (m[2] === "MB" ? 60000 : 1024); });
     check("T3 ilerleme “n / 6” sırayla", r.prog, ["1 / 6", "2 / 6", "3 / 6", "4 / 6", "5 / 6", "6 / 6"]);
