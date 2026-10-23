@@ -3,7 +3,7 @@
 Dosyanın hiçbir yere yüklenmediği PDF ve görsel araçları. Her şey tarayıcıda çalışır:
 sunucu yok, hesap yok, dış istek yok.
 
-Yayında: <https://babatavman.github.io/noupload/> (Türkçe) · <https://babatavman.github.io/noupload/en/> (English)
+Yayında: <https://noupload.github.io/noupload/> (Türkçe) · <https://noupload.github.io/noupload/en/> (English)
 
 ## Değişiklik yapmak
 
@@ -96,7 +96,7 @@ Sürümler, kaynaklar, özetler ve lisans metinleri `lib/` içinde (`lib/README.
 
 ## Notlar
 
-- `robots.txt` yalnızca alan adının kökünde (`babatavman.github.io/robots.txt`) geçerlidir; bu depo
+- `robots.txt` yalnızca alan adının kökünde (`noupload.github.io/robots.txt`) geçerlidir; bu depo
   `/noupload/` altında yayınlandığı için arama motorları buradakini okumaz. Site haritasını
   Search Console'dan `…/noupload/sitemap.xml` adresiyle bildirmek gerekir. Site kendi alan adına
   taşınırsa dosya olduğu gibi çalışır (`build.js` içindeki `SITE` adresini güncellemek yeter).

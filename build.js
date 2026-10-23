@@ -31,7 +31,7 @@ const fs = require("fs");
 const path = require("path");
 
 /* ------------------------------ AYARLAR ------------------------------ */
-const SITE = "https://babatavman.github.io/noupload/".replace(/\/*$/, "/");  // sitenin yayındaki adresi; alan adı değişirse yalnızca burası
+const SITE = "https://noupload.github.io/noupload/".replace(/\/*$/, "/");  // sitenin yayındaki adresi; alan adı değişirse yalnızca burası
 const DEFAULT_LANG = "tr";                              // kök adreste yayınlanan dil (mevcut bağlantılar bozulmasın)
 const X_DEFAULT = "en";                                 // dili eşleşmeyen ziyaretçiye önerilen sürüm (hreflang="x-default")
 const PAGES = ["index", "pdf", "foto", "foto-pdf"];     // src/<ad>.html
