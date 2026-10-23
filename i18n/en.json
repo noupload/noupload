@@ -157,7 +157,7 @@
     "foot": "Single page · no server · no data collected",
     "fileName": "lecture-notes.pdf",
     "nameL": "File name",
-    "nameHint": "Leave it empty and the file downloads as “lecture-notes.pdf”.",
+    "nameHint": "The last name you typed is remembered on this device. Leave it empty and the file downloads as “lecture-notes.pdf”.",
     "noneOk": "None of the photos could be opened, so no PDF was created.",
     "noLib": "The PDF library couldn't be loaded. Check your internet connection and try again; your photos are still here.",
     "fail": "Something went wrong while creating the PDF. Try again with fewer photos or with “Small file”.",

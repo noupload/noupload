@@ -432,7 +432,15 @@ function pdfName(){
   return raw ? raw + ".pdf" : STR.fileName;
 }
 el("pdfName").placeholder = STR.fileName.replace(/\.pdf$/i, "");
-el("pdfName").addEventListener("input", () => { el("dl").download = pdfName(); });
+// Son yazılan ad bir sonraki açılışta hazır gelsin. Yalnızca bu cihazda (localStorage) durur, hiçbir yere gönderilmez;
+// kutu boşaltılınca kayıt da silinir. Gizli pencerede ya da depolama kapalıyken sessizce kaydetmeden çalışır.
+const NAME_KEY = "noupload-pdf-name";
+try { el("pdfName").value = localStorage.getItem(NAME_KEY) || ""; } catch(e){}
+el("pdfName").addEventListener("input", () => {
+  el("dl").download = pdfName();
+  const v = el("pdfName").value.trim();
+  try { v ? localStorage.setItem(NAME_KEY, v) : localStorage.removeItem(NAME_KEY); } catch(e){}
+});
 el("pdfName").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
 
 /* ==================================================================

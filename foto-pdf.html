@@ -179,7 +179,7 @@
     <div class="namefield">
       <label for="pdfName">Dosya adı</label>
       <div class="namebox"><input type="text" id="pdfName" maxlength="80" autocomplete="off" spellcheck="false" enterkeyhint="done" aria-describedby="nameHint"><span aria-hidden="true">.pdf</span></div>
-      <p class="hint" id="nameHint">Boş bırakırsan dosya “ders-notlari.pdf” adıyla iner.</p>
+      <p class="hint" id="nameHint">Son yazdığın ad bu cihazda hatırlanır. Boş bırakırsan dosya “ders-notlari.pdf” adıyla iner.</p>
     </div>
   </section>
 
@@ -263,7 +263,7 @@ const STR = {
  "foot": "Tek sayfa · sunucu yok · veri toplanmıyor",
  "fileName": "ders-notlari.pdf",
  "nameL": "Dosya adı",
- "nameHint": "Boş bırakırsan dosya “ders-notlari.pdf” adıyla iner.",
+ "nameHint": "Son yazdığın ad bu cihazda hatırlanır. Boş bırakırsan dosya “ders-notlari.pdf” adıyla iner.",
  "noneOk": "Fotoğrafların hiçbiri açılamadı, PDF oluşturulamadı.",
  "noLib": "PDF kütüphanesi yüklenemedi. İnternet bağlantını kontrol edip yeniden dene; seçtiğin fotoğraflar duruyor.",
  "fail": "PDF oluşturulurken bir sorun çıktı. Daha az fotoğrafla ya da “Küçük dosya” ile yeniden dene.",
@@ -527,7 +527,15 @@ function pdfName(){
   return raw ? raw + ".pdf" : STR.fileName;
 }
 el("pdfName").placeholder = STR.fileName.replace(/\.pdf$/i, "");
-el("pdfName").addEventListener("input", () => { el("dl").download = pdfName(); });
+// Son yazılan ad bir sonraki açılışta hazır gelsin. Yalnızca bu cihazda (localStorage) durur, hiçbir yere gönderilmez;
+// kutu boşaltılınca kayıt da silinir. Gizli pencerede ya da depolama kapalıyken sessizce kaydetmeden çalışır.
+const NAME_KEY = "noupload-pdf-name";
+try { el("pdfName").value = localStorage.getItem(NAME_KEY) || ""; } catch(e){}
+el("pdfName").addEventListener("input", () => {
+  el("dl").download = pdfName();
+  const v = el("pdfName").value.trim();
+  try { v ? localStorage.setItem(NAME_KEY, v) : localStorage.removeItem(NAME_KEY); } catch(e){}
+});
 el("pdfName").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } });
 
 /* ==================================================================

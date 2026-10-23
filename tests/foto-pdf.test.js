@@ -176,6 +176,12 @@ const SPY = `(() => {
     // 90° sağa dönen şerit yukarıdan aşağı okunur (2); 270° dönen ters yönde durur: 00000001 → 10000000 = 128
     check("T3 döndürülenlerin sırası (dikey okunan kod)", [pages[1].bitsV, pages[0].bitsV], [2, 128]);
     await b.shot(path.join(SHOTS, "masaustu-bitti.png"));
+    // son yazılan ad yalnızca bu cihazda saklanır: yeniden açılınca kutu dolu gelir ve PDF o adla iner; kutu boşaltılınca kayıt silinir
+    { const setName = v => ev(`(() => { const i = document.getElementById("pdfName"); i.value = ${JSON.stringify(v)}; i.dispatchEvent(new Event("input", { bubbles: true })); })()`);
+      await setName("Kimya özet"); await reload(); await pick(A); await make();
+      const kept = await ev(`[document.getElementById("pdfName").value, document.getElementById("dl").getAttribute("download"), localStorage.getItem("noupload-pdf-name")]`);
+      await setName(""); const cleared = await ev(`[localStorage.getItem("noupload-pdf-name"), document.getElementById("dl").getAttribute("download")]`);
+      check("T3 dosya adı hatırlanıyor (yeniden açılınca dolu, o adla iniyor); boşaltınca kayıt siliniyor", [kept, cleared], [["Kimya özet", "Kimya özet.pdf", "Kimya özet"], [null, X.fileName]]); }
   }
 
   /* ---------- T4. Seçenekler ---------- */
